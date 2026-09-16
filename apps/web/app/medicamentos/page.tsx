@@ -1,5 +1,7 @@
-import Link from 'next/link';
-import { ClinicalSearch } from '../../components/search';
-import { substances } from '@exacta7/knowledge';
-export const metadata = { title: 'Medicamentos' };
-export default function Medicines() { return <><div className="breadcrumb"><Link href="/">Inicio</Link><span>/</span>Vademécum</div><div className="page-intro compact"><p className="eyebrow green">CONSULTA FARMACOLÓGICA</p><h1>Vademécum veterinario</h1><p className="lead">Encuentra el medicamento. Consulta su contexto. Verifica la fuente.</p></div><div className="notice">Catálogo en preparación. Las fichas sin revisión no contienen recomendaciones ni presentaciones publicadas.</div><section className="search-panel"><ClinicalSearch medicationOnly/></section><section className="tool-section"><h2>Fichas disponibles</h2>{substances.map(d => <Link className="directory-row" key={d.id} href={`/medicamentos/${d.slug}`}><strong>{d.name}</strong><span className="muted">Ficha en preparación</span><span aria-hidden>→</span></Link>)}</section></>; }
+import { regulatoryProducts, regulatoryRelease } from '@exacta7/knowledge/regulatory';
+import { MedicineDirectory } from '../../components/medicine-directory';
+export const metadata = { title: 'Vademécum veterinario AEMPS' };
+export default function Medicines() {
+  const products = regulatoryProducts.map(({ slug, name, registrationNumber, activeSubstances, species, routes, marketingStatus }) => ({ slug, name, registrationNumber, activeSubstances, species, routes, marketingStatus }));
+  return <MedicineDirectory products={products} release={regulatoryRelease.release}/>;
+}

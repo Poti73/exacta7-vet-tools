@@ -20,6 +20,8 @@ export type SearchEntry = {
   substanceSlug?: string; source?: Source; publication?: Publication;
   navigationOnly?: boolean;
 };
+import aempsSearch from './generated/aemps-search.json';
+type AempsSearchRecord = { slug: string; name: string; registrationNumber: string; activeSubstances: string[]; species: string[]; routes: string[]; atcvet: string[]; marketingStatus: string };
 export const groups: Group[] = ['MEDICAMENTOS', 'CALCULADORAS', 'HERRAMIENTAS', 'REFERENCIAS'];
 export function isPublished(publication: Publication | undefined, source: Source | undefined): boolean {
   return !!publication && publication.state === 'PUBLISHED' && !!publication.reviewer?.trim()
@@ -28,7 +30,7 @@ export function isPublished(publication: Publication | undefined, source: Source
     && /^https:\/\//.test(source.url) && !!source.version && !!source.license;
 }
 export const sources: Source[] = [
-  { id: 'aemps', title: 'AEMPS · CIMA Vet', kind: 'regulatory', url: 'https://cimavet.aemps.es/cimavet/publico/home.html', retrievedAt: '2026-09-16', version: 'portal', license: 'Enlace únicamente; reutilización pendiente de verificación' },
+  { id: 'aemps', title: 'AEMPS · CIMA Vet', kind: 'regulatory', url: 'https://sede.aemps.gob.es/datos-abiertos/', retrievedAt: '2026-09-16', version: 'Nomenclátor CIMA Vet 2026-09-16', license: 'Reutilización con atribución conforme al portal de datos abiertos de AEMPS' },
   { id: 'aaha', title: 'AAHA · Anestesia y monitorización 2020', kind: 'guideline', url: 'https://www.aaha.org/resources/2020-aaha-anesthesia-and-monitoring-guidelines-for-dogs-and-cats/', retrievedAt: '2026-09-16', version: '2020', license: 'Enlace únicamente; sin reproducción de contenido' },
   { id: 'wsava', title: 'WSAVA · Guías de dolor', kind: 'guideline', url: 'https://wsava.org/global-guidelines/pain-guidelines/', retrievedAt: '2026-09-16', version: 'portal', license: 'Enlace únicamente; sin reproducción de contenido' },
   { id: 'msd', title: 'MSD Veterinary Manual', kind: 'secondary', url: 'https://www.msdvetmanual.com/', retrievedAt: '2026-09-16', version: 'portal', license: 'Referencia secundaria y seguimiento bibliográfico; sin extracción' },
@@ -61,6 +63,19 @@ export function buildIndex(drugs: Substance[], products: Presentation[], guidanc
 }
 export const catalog: SearchEntry[] = [
   ...buildIndex(substances, presentations, recommendations),
+  ...(aempsSearch as AempsSearchRecord[]).map(product => ({
+    id: `aemps-${product.registrationNumber}`,
+    group: 'MEDICAMENTOS' as const,
+    title: product.name,
+    description: `Producto AEMPS/CIMA Vet · registro ${product.registrationNumber}`,
+    href: `/medicamentos/${product.slug}`,
+    terms: [product.registrationNumber, ...product.activeSubstances, ...product.atcvet],
+    species: product.species,
+    routes: product.routes,
+    indications: [],
+    categories: product.atcvet,
+    source: sources[0],
+  })),
   navigation('dose', 'CALCULADORAS', 'Dosis y volumen', 'Conversión matemática de una dosis seleccionada por el profesional.', '/calculadoras/dose', ['dosis', 'peso', 'concentración', 'mg kg', 'volumen', 'perro', 'gato']),
   navigation('cri', 'CALCULADORAS', 'Infusión continua · CRI', 'Convierte la tasa introducida en un caudal de infusión.', '/calculadoras/cri', ['CRI', 'infusión', 'continua', 'bomba', 'mg/kg/h', 'µg/kg/min', 'perro', 'gato']),
   navigation('fluid', 'CALCULADORAS', 'Fluidoterapia', 'Calcula mL/h a partir de la tasa elegida por el profesional.', '/calculadoras/fluidos', ['fluidoterapia', 'fluidos', 'ml kg h', 'perro', 'gato']),

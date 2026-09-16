@@ -31,6 +31,6 @@ E2E utiliza Google Chrome instalado; CI instala Chrome con Playwright.
 - `/calculadoras/dose`, `/calculadoras/cri`, `/calculadoras/fluidos`.
 - `/fuentes`: directorio y metodología.
 
-No hay datos clínicos publicados. La ficha de propofol es una estructura vacía, no una monografía revisada. La importación AEMPS/CIMA Vet se mantiene en staging local y no se incluye en la aplicación hasta revisión humana. Los únicos productos y rangos sintéticos están en tests y nunca se incluyen en la aplicación. Las calculadoras ejecutan matemáticas con valores elegidos por el usuario; no validan la adecuación clínica.
+El catálogo público incluye productos y presentaciones regulatorias autorizadas del nomenclátor AEMPS/CIMA Vet del 16/09/2026, con atribución, versión y enlaces oficiales. No hay recomendaciones clínicas ni dosis publicadas: la ficha de propofol sigue siendo una estructura de navegación vacía. Los únicos rangos sintéticos están en tests y nunca se incluyen en la aplicación. Las calculadoras ejecutan matemáticas con valores elegidos por el usuario; no validan la adecuación clínica.
 
 El buscador funciona sin servicios externos, LLM ni registro de consultas. Revisa `docs/SEARCH-ARCHITECTURE.md` para la evaluación Supabase/PostgreSQL y `docs/STATUS.md` para pendientes. No se ha desplegado ni aprovisionado infraestructura.

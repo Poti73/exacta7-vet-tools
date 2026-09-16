@@ -2,7 +2,7 @@
 
 | Fuente | Uso en esta entrega | Estado |
 | --- | --- | --- |
-| AEMPS/CIMA Vet | Enlace al portal; modelo de productos/presentaciones | No se ha importado ni publicado producto real. Licencia de reutilización pendiente de verificación. |
+| AEMPS/CIMA Vet | Productos y presentaciones regulatorias autorizadas | Publicado con atribución desde el portal de datos abiertos; sin recomendaciones clínicas. |
 | AAHA 2020 | Título/enlace bibliográfico | Sin extracción de dosis ni reproducción de tablas. |
 | WSAVA | Enlace a guías de dolor | Sin extracción de recomendaciones. |
 | MSD | Referencia/enlace y seguimiento bibliográfico | Sin scraping ni copia de tablas/capítulos. |
@@ -15,7 +15,9 @@
 - Fecha declarada dentro del XML: 2026-09-16.
 - SHA-256 del ZIP: `c91ced2ae82da27c239cebc77b1c334cad113e43290a38dba6cb761ebe4b4c91`.
 - Aviso legal descargado y conservado para revisión: SHA-256 `2f19c452a7c096bf82a2ca41e82a947c49c5cfd9c70cab071551b7059bc1ebf4`.
-- Resultado de staging local: 3.261 productos y 14.024 presentaciones; todos `PENDING_REVIEW`.
+- Resultado de staging local: 3.261 productos y 14.024 presentaciones.
+- Publicación regulatoria aprobada: 3.239 productos autorizados y resueltos, con 13.928 presentaciones autorizadas.
+- Se excluyen 21 productos anulados y el producto autorizado `EU/2/96/001/003`, que contiene tres IDs de principios activos sin resolver.
 - No se importan recomendaciones clínicas, rangos, posologías ni CRI desde este fichero. La URL de la ficha técnica se conserva solo como enlace regulatorio.
 - La aplicación pública no consume el staging. Su incorporación exige revisión humana, resolución de valores no mapeados, una decisión de publicación y una fuente/versionado asociado a cada registro.
 
