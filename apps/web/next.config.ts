@@ -1,5 +1,6 @@
 import type { NextConfig } from 'next';
 const config: NextConfig = {
+  output: 'standalone',
   transpilePackages: ['@exacta7/clinical-core', '@exacta7/knowledge'],
   poweredByHeader: false,
   devIndicators: false,

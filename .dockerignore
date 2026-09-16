@@ -1,0 +1,12 @@
+.git
+.next
+node_modules
+.pnpm-store
+coverage
+playwright-report
+test-results
+data/aemps/raw
+data/aemps/staging
+.env
+.env.*
+!\.env.example
