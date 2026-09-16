@@ -1,0 +1,3 @@
+import Link from 'next/link';
+export const metadata = { title: 'Calculadoras' };
+export default function Page() { return <><div className="page-intro compact"><p className="eyebrow green">HERRAMIENTAS</p><h1>Calculadoras clínicas</h1><p className="lead">Operaciones deterministas, unidades visibles y valores elegidos por ti.</p></div><div className="tool-grid">{[['dose','Dosis y volumen','Cantidad total y volumen a partir de peso, dosis y concentración.'],['cri','Infusión continua · CRI','Caudal desde mg/kg/h o µg/kg/min.'],['fluidos','Fluidoterapia','Conversión de mL/kg/h a mL/h.']].map(([id,title,text]) => <Link className="tool-card" href={`/calculadoras/${id}`} key={id}><h2>{title}</h2><p>{text}</p><span aria-hidden>→</span></Link>)}</div></>; }

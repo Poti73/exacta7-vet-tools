@@ -1,0 +1,15 @@
+node_modules/
+.next/
+.pnpm-store/
+.env*
+!.env.example
+*backup_code*
+*.pem
+*.key
+coverage/
+playwright-report/
+test-results/
+*.tsbuildinfo
+*.log
+data/aemps/raw/
+data/aemps/staging/
