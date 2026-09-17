@@ -18,6 +18,12 @@ export async function POST(request: Request) {
   if (!SMTP_HOST || !SMTP_USER || !SMTP_PASSWORD) return NextResponse.json({ error:'not_configured' },{ status:503 });
   const port = Number(SMTP_PORT || 465);
   const transporter = nodemailer.createTransport({ host:SMTP_HOST, port, secure:port===465, auth:{ user:SMTP_USER, pass:SMTP_PASSWORD } });
-  await transporter.sendMail({ from:`Exacta7 web <${SMTP_USER}>`, to:CONTACT_TO||'info@exacta7.com', replyTo:email, subject:`[Exacta7] ${subject.replace(/[\r\n]/g,' ')}`, text:`Nombre: ${name}\nCorreo: ${email}\nOrganización: ${organization||'—'}\n\n${message}` });
-  return NextResponse.json({ ok:true });
+  try {
+    await transporter.sendMail({ from:`Exacta7 web <${SMTP_USER}>`, to:CONTACT_TO||'info@exacta7.com', replyTo:email, subject:`[Exacta7] ${subject.replace(/[\r\n]/g,' ')}`, text:`Nombre: ${name}\nCorreo: ${email}\nOrganización: ${organization||'—'}\n\n${message}` });
+    return NextResponse.json({ ok:true });
+  } catch (error) {
+    const detail = error instanceof Error ? error.message : 'Unknown SMTP error';
+    console.error('[contact] SMTP delivery failed:', detail);
+    return NextResponse.json({ error:'smtp_delivery_failed' },{ status:502 });
+  }
 }
