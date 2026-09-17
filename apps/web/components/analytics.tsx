@@ -3,7 +3,10 @@ import Script from 'next/script';
 import { usePathname } from 'next/navigation';
 import { useEffect } from 'react';
 
-const measurementId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
+// GA4 measurement IDs are public client configuration. Keep the deployment
+// variable configurable while retaining the confirmed production stream when
+// a Dokploy build does not expose NEXT_PUBLIC_* during compilation.
+const measurementId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || 'G-TV65MMYH31';
 export function Analytics() {
   const pathname = usePathname();
   useEffect(() => {
