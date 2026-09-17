@@ -1,6 +1,6 @@
 # Retención y privacidad de casos clínicos locales
 
-Exacta7 guarda los casos activos únicamente en el almacenamiento local del navegador (`localStorage`). No hay autenticación, sincronización, base de datos remota, analítica ni envío de datos clínicos en esta versión.
+Exacta7 guarda los casos activos únicamente en el almacenamiento local del navegador (`localStorage`). No hay autenticación, sincronización, base de datos remota ni envío de datos clínicos.
 
 ## Estados y ciclo de vida
 
@@ -21,6 +21,6 @@ Se recogen solo alias opcional, especie, peso, ASA y los campos clínicos opcion
 
 La modalidad gratuita permite varios casos temporales locales. Las capacidades PRO de guardado, historial y sincronización no están implementadas: requerirán autenticación, consentimiento, retención configurable y controles de acceso antes de activarse.
 
-## Analítica futura
+## Analítica
 
-No hay Google Analytics ni otro proveedor de analítica instalado. Si se incorpora medición, solo se registrarán eventos agregados sin identificadores clínicos ni datos de pacientes, por ejemplo creación, cambio, finalización o expiración de un caso.
+Google Analytics 4 se carga con Consent Mode v2 y `analytics_storage` denegado por defecto. Solo se activa tras consentimiento explícito. La medición se limita a páginas y eventos agregados; nunca incluye textos de búsqueda, datos de pacientes, pesos, dosis, concentraciones, indicaciones, vías ni resultados de cálculos.
