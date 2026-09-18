@@ -1,7 +1,7 @@
 import { createAdminClient } from './supabase/admin';
 import { planName, type SubscriptionRecord } from './billing';
 
-const DEFAULT_ADMIN_EMAILS = ['potibiro.yosvany@gmail.com', 'info@exacta7.com'];
+const DEFAULT_ADMIN_EMAILS = ['info@exacta7.com'];
 
 export function isAdminEmail(email?: string | null): boolean {
   if (!email) return false;
