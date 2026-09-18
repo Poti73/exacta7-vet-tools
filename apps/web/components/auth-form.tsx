@@ -32,7 +32,7 @@ export function AuthForm({ nextPath = '/cuenta' }: { nextPath?: string }) {
         const { data, error } = await supabase.auth.signUp({ email, password, options: { emailRedirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(safeNext)}` } });
         if (error) throw error;
         if (data.session) router.replace(safeNext);
-        else setMessage('Revisa tu correo y confirma la cuenta para continuar.');
+        else setMessage('confirmation_sent');
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
@@ -44,5 +44,40 @@ export function AuthForm({ nextPath = '/cuenta' }: { nextPath?: string }) {
 
   if (config === undefined) return <section className="panel narrow"><h1>Preparando acceso…</h1></section>;
   if (!hasSupabasePublicConfig(config)) return <section className="panel narrow"><h1>Acceso en preparación</h1><p>La autenticación todavía no está disponible en este entorno.</p></section>;
-  return <section className="auth-card panel narrow"><p className="eyebrow green">EXACTA7 ACCOUNT</p><h1>{mode === 'signup' ? 'Crea tu cuenta' : 'Accede a Exacta7'}</h1><p className="lead">Tu cuenta Free te permite identificarte y gestionar tu plan. El catálogo clínico público permanece disponible sin registro.</p><form className="form-stack" onSubmit={submit}><label>Correo electrónico<input type="email" value={email} onChange={event => setEmail(event.target.value)} autoComplete="email" required /></label><label>Contraseña<input type="password" value={password} onChange={event => setPassword(event.target.value)} autoComplete={mode === 'signup' ? 'new-password' : 'current-password'} minLength={8} required /></label>{mode === 'signup' && <label className="checkbox"><input type="checkbox" required /><span>Acepto la <Link href="/privacidad">política de privacidad</Link> y el uso de mis datos para crear mi cuenta.</span></label>}<button className="primary" type="submit" disabled={busy}>{busy ? 'Un momento…' : mode === 'signup' ? 'Crear cuenta gratis' : 'Acceder'} <span aria-hidden>→</span></button>{message && <p role="status" className={message.startsWith('Revisa') ? 'success-text' : 'error-text'}>{message}</p>}</form><p className="small-text">{mode === 'signup' ? '¿Ya tienes cuenta?' : '¿Aún no tienes cuenta?'} <button className="inline-button" type="button" onClick={() => { setMode(mode === 'signup' ? 'signin' : 'signup'); setMessage(''); }}>{mode === 'signup' ? 'Acceder' : 'Crear cuenta gratis'}</button></p></section>;
+  return (
+    <section className="auth-card panel narrow">
+      <p className="eyebrow green">EXACTA7 ACCOUNT</p>
+      <h1>{mode === 'signup' ? 'Crea tu cuenta' : 'Accede a Exacta7'}</h1>
+      <p className="lead">Tu cuenta Free te permite identificarte y gestionar tu plan. El catálogo clínico público permanece disponible sin registro.</p>
+      <form className="form-stack" onSubmit={submit}>
+        <label>Correo electrónico<input type="email" value={email} onChange={event => setEmail(event.target.value)} autoComplete="email" required /></label>
+        <label>Contraseña<input type="password" value={password} onChange={event => setPassword(event.target.value)} autoComplete={mode === 'signup' ? 'new-password' : 'current-password'} minLength={8} required /></label>
+        {mode === 'signup' && (
+          <label className="checkbox">
+            <input type="checkbox" required />
+            <span>Acepto la <Link href="/privacidad">política de privacidad</Link> y el uso de mis datos para crear mi cuenta.</span>
+          </label>
+        )}
+        <button className="primary" type="submit" disabled={busy}>
+          {busy ? 'Un momento…' : mode === 'signup' ? 'Crear cuenta gratis' : 'Acceder'} <span aria-hidden>→</span>
+        </button>
+        {message === 'confirmation_sent' ? (
+          <div className="auth-notice-box" role="status">
+            <strong className="success-text">¡Cuenta creada! Revisa tu correo para confirmarla.</strong>
+            <p className="small-text spam-alert">
+              ⚠️ <strong>Importante:</strong> El email de confirmación puede llegar a tu carpeta de <strong>Correo no deseado (Spam)</strong> o Promociones. Por favor revísala y marca el correo como seguro si no lo ves en tu bandeja de entrada.
+            </p>
+          </div>
+        ) : message ? (
+          <p role="status" className="error-text">{message}</p>
+        ) : null}
+      </form>
+      <p className="small-text">
+        {mode === 'signup' ? '¿Ya tienes cuenta?' : '¿Aún no tienes cuenta?'}{' '}
+        <button className="inline-button" type="button" onClick={() => { setMode(mode === 'signup' ? 'signin' : 'signup'); setMessage(''); }}>
+          {mode === 'signup' ? 'Acceder' : 'Crear cuenta gratis'}
+        </button>
+      </p>
+    </section>
+  );
 }
