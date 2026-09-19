@@ -1,2 +1,5 @@
+import { CookiesContent } from '../../components/legal-content';
+
 export const metadata = { title: 'Cookies' };
-export default function CookiesPage() { return <article className="page-intro legal-page"><p className="eyebrow">COOKIES</p><h1>Política de cookies</h1><p className="lead">Exacta7 usa almacenamiento técnico y, con tu permiso, medición agregada.</p><h2>Almacenamiento necesario</h2><p>Guardamos tus preferencias de idioma y consentimiento en el navegador. También se conserva localmente el contexto de paciente que tú introduces para facilitar el uso; no se envía a Google Analytics.</p><h2>Google Analytics 4</h2><p>Si aceptas la analítica, GA4 mide páginas visitadas y acciones generales. La medición está denegada por defecto mediante Consent Mode v2 y no incluye textos de búsqueda ni parámetros clínicos.</p><h2>Cambiar la elección</h2><p>Puedes borrar el almacenamiento y las cookies de exacta7.com desde la configuración del navegador para volver a mostrar el selector de consentimiento.</p></article>; }
+
+export default function CookiesPage() { return <CookiesContent />; }
