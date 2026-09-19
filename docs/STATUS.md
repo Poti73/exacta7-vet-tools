@@ -45,5 +45,15 @@ La validación encontró tres IDs activos sin entrada en el diccionario AEMPS qu
 
 La revisión externa `21st review` fue bloqueada por auto-review por posible envío de código a un tercero. Se sustituyó por revisión visual local y Playwright, sin exportar código.
 
-No se ha leído ni utilizado el archivo local de recuperación de Stripe. Está excluido en .gitignore. No se han modificado pagos, DNS, VPS ni otros proyectos.
+No se ha leído ni utilizado el archivo local de recuperación de Stripe. Está excluido en .gitignore.
+
+## Actualización operativa — 2026-09-19
+
+- Repositorio publicado en GitHub y aplicación desplegada en Dokploy en `https://exacta7.com`.
+- Supabase Auth/PostgreSQL conecta cuentas Free y Pro. Las credenciales de Stripe y precios actuales son de prueba; los cobros reales siguen desactivados hasta migrar todas las claves, precios y webhook a producción.
+- Se añadieron los recursos de planes ES, EN y FR y el selector cambia la interfaz de navegación, acceso, cuenta, calculadoras, catálogo, fuentes, contacto y planes.
+- La búsqueda de portada permite filtrar de forma funcional entre todos, medicamentos, calculadoras, herramientas y referencias incluso sin una consulta escrita.
+- El índice AEMPS incluye códigos nacionales de presentación, sin duplicar las 13.928 etiquetas de envase y degradar la búsqueda incremental.
+- La calculadora recibe presentaciones de una ficha AEMPS y solo muestra una concentración cuando está declarada literalmente en el nombre regulatorio de un producto con un único principio activo. Se mantiene la verificación del producto físico y la selección profesional de indicación, vía y dosis.
+- El webhook de Stripe verifica firma, registra eventos de forma idempotente y trata los fallos de escritura de Supabase como errores para que Stripe pueda reintentar.
 

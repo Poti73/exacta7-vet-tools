@@ -21,7 +21,7 @@ export type SearchEntry = {
   navigationOnly?: boolean;
 };
 import aempsSearch from './generated/aemps-search.json';
-type AempsSearchRecord = { slug: string; name: string; registrationNumber: string; activeSubstances: string[]; species: string[]; routes: string[]; atcvet: string[]; marketingStatus: string };
+type AempsSearchRecord = { slug: string; name: string; registrationNumber: string; activeSubstances: string[]; species: string[]; routes: string[]; atcvet: string[]; marketingStatus: string; presentations?: { nationalCode: string; label: string; packageContent: string; packageContentUnit: string }[] };
 export const groups: Group[] = ['MEDICAMENTOS', 'CALCULADORAS', 'HERRAMIENTAS', 'REFERENCIAS'];
 export function isPublished(publication: Publication | undefined, source: Source | undefined): boolean {
   return !!publication && publication.state === 'PUBLISHED' && !!publication.reviewer?.trim()
@@ -69,7 +69,10 @@ export const catalog: SearchEntry[] = [
     title: product.name,
     description: `Producto AEMPS/CIMA Vet · registro ${product.registrationNumber}`,
     href: `/medicamentos/${product.slug}`,
-    terms: [product.registrationNumber, ...product.activeSubstances, ...product.atcvet],
+    // Product names already contain the regulated commercial description. Indexing every
+    // package label duplicates that text thousands of times; national codes keep package
+    // lookup deterministic without slowing the global type-ahead search.
+    terms: [product.registrationNumber, ...product.activeSubstances, ...product.atcvet, ...(product.presentations ?? []).map(presentation => presentation.nationalCode)],
     species: product.species,
     routes: product.routes,
     indications: [],

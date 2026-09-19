@@ -27,13 +27,21 @@ test('buscador global: teclado, acentos, errores, vacío y ficha', async ({ page
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
   const input = page.getByRole('searchbox', { name: 'Buscar en Exacta7', exact: true });
   await input.fill('propfol');
-  await expect(page.getByText('Correspondencia aproximada · comprueba el nombre')).toBeVisible();
+  await expect(page.getByText('Correspondencia aproximada · comprueba el nombre').first()).toBeVisible();
   await input.press('ArrowDown'); await page.keyboard.press('Enter');
   await expect(page).toHaveURL(/\/medicamentos\/propofol$/);
-  for (const title of ['Datos del medicamento', 'Presentaciones', 'Recomendaciones publicadas', 'Calculadoras relacionadas', 'Fuentes']) await expect(page.getByRole('heading', { name: title, exact: true })).toBeVisible();
+  for (const title of ['Datos del medicamento', 'Presentaciones', 'Recomendaciones publicadas', 'Calculadoras relacionadas', 'Fuentes']) await expect(page.getByRole('heading', { name: new RegExp(`^${title}$`, 'i') })).toBeVisible();
   await input.fill('sin coincidencia 123456'); await expect(page.getByText('No encontramos coincidencias')).toBeVisible();
   await input.fill('infusion'); await expect(page.getByRole('link', { name: /Infusión continua · CRI/ }).first()).toBeVisible();
   await input.press('Escape'); await expect(page.getByText('No encontramos coincidencias')).not.toBeVisible();
+});
+
+test('los filtros de la portada cambian los resultados destacados', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: 'CALCULADORAS', exact: true }).click();
+  await expect(page.getByRole('link', { name: /Dosis y volumen/ }).first()).toBeVisible();
+  await page.getByRole('button', { name: 'REFERENCIAS', exact: true }).click();
+  await expect(page.getByRole('link', { name: /AEMPS/ }).first()).toBeVisible();
 });
 
 test('casos activos aíslan peso, concentración y resultados por case_id', async ({ page }) => {

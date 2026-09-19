@@ -26,11 +26,13 @@ E2E utiliza Google Chrome instalado; CI instala Chrome con Playwright.
 ## Rutas
 
 - `/`: buscador global y herramientas.
-- `/medicamentos`, `/medicamentos/propofol`: vademécum y ficha pública de navegación.
+- `/medicamentos`, `/medicamentos/[slug]`: vademécum y fichas públicas regulatorias AEMPS/CIMA Vet.
 - `/paciente`: especie y peso, conservados en sessionStorage de la pestaña.
 - `/calculadoras/dose`, `/calculadoras/cri`, `/calculadoras/fluidos`.
 - `/fuentes`: directorio y metodología.
 
 El catálogo público incluye productos y presentaciones regulatorias autorizadas del nomenclátor AEMPS/CIMA Vet del 16/09/2026, con atribución, versión y enlaces oficiales. No hay recomendaciones clínicas ni dosis publicadas: la ficha de propofol sigue siendo una estructura de navegación vacía. Los únicos rangos sintéticos están en tests y nunca se incluyen en la aplicación. Las calculadoras ejecutan matemáticas con valores elegidos por el usuario; no validan la adecuación clínica.
 
-El buscador funciona sin servicios externos, LLM ni registro de consultas. Revisa `docs/SEARCH-ARCHITECTURE.md` para la evaluación Supabase/PostgreSQL y `docs/STATUS.md` para pendientes. No se ha desplegado ni aprovisionado infraestructura.
+El buscador funciona de manera determinista, sin LLM ni registro de consultas. Incluye productos regulatorios, principios activos, especies, vías y códigos nacionales de presentación. Al abrir una calculadora desde una ficha regulatoria, Exacta7 solo muestra concentraciones que aparecen expresamente en el nombre oficial AEMPS y exige verificar el producto físico; nunca selecciona indicación, vía ni dosis.
+
+La aplicación está publicada en `https://exacta7.com` mediante Dokploy. Usa Supabase Auth/PostgreSQL y Stripe únicamente en modo de prueba hasta que se sustituyan las credenciales y precios por los de producción. Revisa `docs/SEARCH-ARCHITECTURE.md` para la evaluación Supabase/PostgreSQL y `docs/STATUS.md` para el estado operativo.

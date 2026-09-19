@@ -1,5 +1,5 @@
 import{describe,expect,it}from'vitest';
-import{regulatoryProducts,regulatoryRelease}from'../../packages/knowledge/src/regulatory';
+import{regulatoryProducts,regulatoryRelease,toRegulatoryCalculatorProduct}from'../../packages/knowledge/src/regulatory';
 import{catalog,createSearch}from'../../packages/knowledge/src/index';
 describe('publicación regulatoria AEMPS',()=>{
   it('publica únicamente el conjunto autorizado y resuelto',()=>{
@@ -18,5 +18,14 @@ describe('publicación regulatoria AEMPS',()=>{
     const search=createSearch(catalog);
     expect(search('GLUCOSALINO BRAUN')[0]?.group).toBe('MEDICAMENTOS');
     expect(search('GLUCOSA MONOHIDRATO Perros VÍA INTRAVENOSA').length).toBeGreaterThan(0);
+  });
+  it('solo transfiere a cálculo una concentración escrita por AEMPS',()=>{
+    const propofol=regulatoryProducts.find(product=>product.name.startsWith('PROPOFOL LIPURO'));
+    expect(propofol).toBeDefined();
+    const calculatorProduct=toRegulatoryCalculatorProduct(propofol!);
+    expect(calculatorProduct.presentations.length).toBeGreaterThan(0);
+    expect(calculatorProduct.presentations.every(item=>item.concentration==='10'&&item.concentrationUnit==='mg/mL')).toBe(true);
+    const multiActive=regulatoryProducts.find(product=>product.activeSubstances.length>1)!;
+    expect(toRegulatoryCalculatorProduct(multiActive).presentations).toEqual([]);
   });
 });

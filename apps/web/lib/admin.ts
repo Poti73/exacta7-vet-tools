@@ -1,5 +1,6 @@
 import { createAdminClient } from './supabase/admin';
 import { planName, type SubscriptionRecord } from './billing';
+import type { User } from '@supabase/supabase-js';
 
 const DEFAULT_ADMIN_EMAILS = ['info@exacta7.com'];
 
@@ -35,11 +36,13 @@ export async function getCrmData(): Promise<{ users: CrmUserSummary[]; stats: Cr
   const admin = createAdminClient();
 
   // 1. Obtener todos los usuarios de Supabase Auth
-  const { data: authData, error: authError } = await admin.auth.admin.listUsers({
-    page: 1,
-    perPage: 1000,
-  });
-  if (authError) throw authError;
+  const authUsers: User[] = [];
+  for (let page = 1; ; page += 1) {
+    const { data, error } = await admin.auth.admin.listUsers({ page, perPage: 1000 });
+    if (error) throw error;
+    authUsers.push(...data.users);
+    if (data.users.length < 1000) break;
+  }
 
   // 2. Obtener perfiles para asociar stripe_customer_id
   const { data: profiles, error: profilesError } = await admin
@@ -57,7 +60,7 @@ export async function getCrmData(): Promise<{ users: CrmUserSummary[]; stats: Cr
     .order('updated_at', { ascending: false });
   if (subsError) throw subsError;
 
-  const latestSubMap = new Map<string, any>();
+  const latestSubMap = new Map<string, SubscriptionRecord>();
   subscriptions?.forEach(sub => {
     if (!latestSubMap.has(sub.user_id)) {
       latestSubMap.set(sub.user_id, sub);
@@ -68,9 +71,9 @@ export async function getCrmData(): Promise<{ users: CrmUserSummary[]; stats: Cr
   let proCount = 0;
   let cancelingCount = 0;
 
-  const users: CrmUserSummary[] = authData.users.map(u => {
-    const subRecord = latestSubMap.get(u.id) as SubscriptionRecord;
-    const plan = planName(subRecord) as 'Pro' | 'Free';
+  const users: CrmUserSummary[] = authUsers.map(u => {
+    const subRecord = latestSubMap.get(u.id);
+    const plan = planName(subRecord ?? null) as 'Pro' | 'Free';
     const status = subRecord?.status ?? 'sin suscripción';
     const cancelAtPeriodEnd = subRecord?.cancel_at_period_end ?? false;
 

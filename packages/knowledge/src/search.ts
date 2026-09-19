@@ -11,21 +11,33 @@ function distance(a: string, b: string): number {
 }
 export type Hit = SearchEntry & { approximate: boolean; score: number };
 export function createSearch(entries: SearchEntry[]) {
-  const index = entries.map(entry => ({ entry, title: normalize(entry.title), words: normalize([entry.title, ...entry.terms, ...entry.species, ...entry.routes, ...entry.indications, ...entry.categories].join(' ')).split(' ') }));
+  const index = entries.map(entry => ({ entry, title: normalize(entry.title), titleWords: normalize(entry.title).split(' '), words: normalize([entry.title, ...entry.terms, ...entry.species, ...entry.routes, ...entry.indications, ...entry.categories].join(' ')).split(' ') }));
+  const cache = new Map<string, Hit[]>();
   return (query: string, group?: Group): Hit[] => {
     const q = normalize(query.slice(0, 120));
     const tokens = q.split(' ').filter(Boolean).slice(0, 12);
     if (!tokens.length) return [];
-    return index.flatMap(({ entry, title, words }) => {
+    const cacheKey = `${group ?? ''}\u0000${q}`;
+    const previous = cache.get(cacheKey);
+    if (previous) return previous;
+    const results = index.flatMap(({ entry, title, titleWords, words }) => {
       if (group && entry.group !== group) return [];
       let approximate = false; let score = title === q ? 100 : title.startsWith(q) ? 60 : 0;
       for (const token of tokens) {
         if (words.includes(token)) score += 10;
         else if (words.some(w => w.startsWith(token))) score += 5;
-        else if (token.length >= 4 && words.some(w => Math.abs(w.length-token.length) <= 1 && distance(token, w) <= 1)) { approximate = true; score += 1; }
+        else if (token.length >= 4 && words.some(w => Math.abs(w.length-token.length) <= 1 && distance(token, w) <= 1)) {
+          approximate = true;
+          // A direct medicine record is more useful than a commercial product that only
+          // happens to contain the same misspelt ingredient in its name.
+          score += titleWords.length === 1 && distance(token, titleWords[0]) <= 1 ? 20 : titleWords.some(w => Math.abs(w.length-token.length) <= 1 && distance(token, w) <= 1) ? 4 : 1;
+        }
         else return [];
       }
       return [{ ...entry, approximate, score }];
     }).sort((a,b) => Number(a.approximate)-Number(b.approximate) || b.score-a.score || a.id.localeCompare(b.id, 'es')).slice(0, 60);
+    if (cache.size >= 120) cache.clear();
+    cache.set(cacheKey, results);
+    return results;
   };
 }

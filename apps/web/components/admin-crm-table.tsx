@@ -94,7 +94,7 @@ export function AdminCrmTable({
         <div className="crm-filters">
           <select
             value={filterPlan}
-            onChange={e => setFilterPlan(e.target.value as any)}
+            onChange={e => { const value = e.target.value; if (value === 'all' || value === 'pro' || value === 'free') setFilterPlan(value); }}
             aria-label="Filtrar por plan"
           >
             <option value="all">Todos los planes</option>
@@ -121,7 +121,7 @@ export function AdminCrmTable({
       <div className="crm-table-wrapper panel">
         <div className="crm-table-header-info">
           <h2>Listado de Clientes ({filteredUsers.length})</h2>
-          {search && <span className="small-text muted">Filtrado por: "{search}"</span>}
+          {search && <span className="small-text muted">Filtrado por: &quot;{search}&quot;</span>}
         </div>
 
         {filteredUsers.length === 0 ? (

@@ -92,8 +92,9 @@ const payload = {
 const serialized = `${JSON.stringify(payload)}\n`;
 await mkdir(dirname(output), { recursive: true });
 await writeFile(output, serialized, 'utf8');
-const searchPayload = products.map(({ slug, name, registrationNumber, activeSubstances, species, routes, atcvet, marketingStatus }) => ({
+const searchPayload = products.map(({ slug, name, registrationNumber, activeSubstances, species, routes, atcvet, marketingStatus, presentations }) => ({
   slug, name, registrationNumber, activeSubstances, species, routes, atcvet, marketingStatus,
+  presentations: presentations.map(({ nationalCode, label, packageContent, packageContentUnit }) => ({ nationalCode, label, packageContent, packageContentUnit })),
 }));
 const serializedSearch = `${JSON.stringify(searchPayload)}\n`;
 await writeFile(searchOutput, serializedSearch, 'utf8');

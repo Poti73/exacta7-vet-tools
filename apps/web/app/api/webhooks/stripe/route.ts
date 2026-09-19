@@ -51,7 +51,9 @@ async function syncSubscription(admin: ReturnType<typeof createAdminClient>, sub
   }
   if (!userId || !stripeCustomerId) throw new Error('No se pudo asociar la suscripción a un usuario.');
   const priceId = subscription.items.data[0]?.price.id ?? null;
-  await admin.from('profiles').upsert({ id: userId, stripe_customer_id: stripeCustomerId }, { onConflict: 'id' });
+  const { error: profileError } = await admin.from('profiles').upsert({ id: userId, stripe_customer_id: stripeCustomerId }, { onConflict: 'id' });
+  if (profileError) throw profileError;
   const periodEnd = subscription.items.data[0]?.current_period_end;
-  await admin.from('subscriptions').upsert({ user_id: userId, stripe_customer_id: stripeCustomerId, stripe_subscription_id: subscription.id, stripe_price_id: priceId, status: subscription.status, current_period_end: periodEnd ? new Date(periodEnd * 1000).toISOString() : null, cancel_at_period_end: subscription.cancel_at_period_end, updated_at: new Date().toISOString() }, { onConflict: 'stripe_subscription_id' });
+  const { error: subscriptionError } = await admin.from('subscriptions').upsert({ user_id: userId, stripe_customer_id: stripeCustomerId, stripe_subscription_id: subscription.id, stripe_price_id: priceId, status: subscription.status, current_period_end: periodEnd ? new Date(periodEnd * 1000).toISOString() : null, cancel_at_period_end: subscription.cancel_at_period_end, updated_at: new Date().toISOString() }, { onConflict: 'stripe_subscription_id' });
+  if (subscriptionError) throw subscriptionError;
 }
