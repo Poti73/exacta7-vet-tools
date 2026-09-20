@@ -1,9 +1,19 @@
 import { notFound } from 'next/navigation';
+import { findCalculator } from '@exacta7/clinical-core';
 import { substances } from '@exacta7/knowledge';
 import { findRegulatoryProduct, toRegulatoryCalculatorProduct } from '@exacta7/knowledge/regulatory';
-import { CalculatorScreen } from '../../../components/localized-headings';
+import { CalculatorScreen, SimpleCalculatorScreen } from '../../../components/localized-headings';
+import { isProSubscription } from '../../../lib/billing';
+import { createClient } from '../../../lib/supabase/server';
+
+async function hasProAccess() {
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY) return false;
+  try { const supabase = await createClient(); const { data } = await supabase.auth.getClaims(); const userId = typeof data?.claims?.sub === 'string' ? data.claims.sub : null; if (!userId) return false; const { data: subscriptions } = await supabase.from('subscriptions').select('status, stripe_price_id, current_period_end, cancel_at_period_end').eq('user_id', userId).order('updated_at', { ascending: false }).limit(1); return isProSubscription(subscriptions?.[0] ?? null); } catch { return false; }
+}
 export default async function Page({ params, searchParams }: { params: Promise<{tool: string}>; searchParams: Promise<{medicamento?: string}> }) {
-  const { tool } = await params; if (tool !== 'dose' && tool !== 'cri' && tool !== 'fluidos') notFound();
+  const { tool } = await params; const metadata = findCalculator(tool); if (!metadata || metadata.reviewState !== 'published') notFound();
+  if (tool === 'unit-converter' || tool === 'dilutions' || tool === 'drip-rate') return <SimpleCalculatorScreen tool={tool} proAllowed={metadata.plan === 'free' || await hasProAccess()} />;
+  if (tool !== 'dose' && tool !== 'cri' && tool !== 'fluidos') notFound();
   const { medicamento } = await searchParams; const drug = substances.find(d => d.slug === medicamento); const regulatoryProduct = medicamento ? findRegulatoryProduct(medicamento) : undefined;
   if (medicamento && !drug && !regulatoryProduct) notFound();
   return <CalculatorScreen tool={tool} substanceId={drug?.id} drugName={drug?.name ?? regulatoryProduct?.name} regulatoryProduct={regulatoryProduct ? toRegulatoryCalculatorProduct(regulatoryProduct) : undefined}/>;

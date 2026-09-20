@@ -13,3 +13,9 @@
 - No existe un proceso clínico de aprobación en esta entrega. La estructura de publicación no sustituye autenticación, auditoría ni una revisión veterinaria real.
 
 Antes de producción: revisión veterinaria del contenido y del flujo, importer staging con licencias verificadas, revisión legal, control de publicaciones con auditoría, análisis de rango/contexto y validación de precisión del dispositivo. No confundir un cálculo matemáticamente correcto con una pauta adecuada.
+
+## Registro del cálculo y literatura
+
+El registro local de cálculo incluye ID, fecha, inputs, fórmula, conversiones, fuente, versión, advertencias y, cuando existe, paciente y presentación. Copiar e imprimir no transmite esos datos.
+
+La consulta bibliográfica se hace solo desde una indicación controlada y una especie opcional. No se envían alias del paciente, case_id, peso, dosis, concentración ni resultados. Una publicación relacionada no equivale a una recomendación clínica.

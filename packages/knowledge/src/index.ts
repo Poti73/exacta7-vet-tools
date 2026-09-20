@@ -13,7 +13,7 @@ export type Recommendation = {
   source: Source; publication: Publication;
 };
 export type Substance = { id: string; slug: string; name: string; aliases: string[]; categories: string[]; publication?: Publication; source?: Source };
-export type Group = 'MEDICAMENTOS' | 'CALCULADORAS' | 'HERRAMIENTAS' | 'REFERENCIAS';
+export type Group = 'MEDICAMENTOS' | 'INDICACIONES' | 'CALCULADORAS' | 'HERRAMIENTAS' | 'REFERENCIAS';
 export type SearchEntry = {
   id: string; group: Group; title: string; description: string; href: string; terms: string[];
   species: string[]; routes: string[]; indications: string[]; categories: string[];
@@ -21,8 +21,10 @@ export type SearchEntry = {
   navigationOnly?: boolean;
 };
 import aempsSearch from './generated/aemps-search.json';
+import { indications } from './indications';
+import { publishedCalculators } from '@exacta7/clinical-core';
 type AempsSearchRecord = { slug: string; name: string; registrationNumber: string; activeSubstances: string[]; species: string[]; routes: string[]; atcvet: string[]; marketingStatus: string; presentations?: { nationalCode: string; label: string; packageContent: string; packageContentUnit: string }[] };
-export const groups: Group[] = ['MEDICAMENTOS', 'CALCULADORAS', 'HERRAMIENTAS', 'REFERENCIAS'];
+export const groups: Group[] = ['MEDICAMENTOS', 'INDICACIONES', 'CALCULADORAS', 'HERRAMIENTAS', 'REFERENCIAS'];
 export function isPublished(publication: Publication | undefined, source: Source | undefined): boolean {
   return !!publication && publication.state === 'PUBLISHED' && !!publication.reviewer?.trim()
     && !!publication.reviewedAt && Number.isFinite(Date.parse(publication.reviewedAt))
@@ -39,7 +41,7 @@ export const sources: Source[] = [
 export const substances: Substance[] = [{ id: 'propofol', slug: 'propofol', name: 'Propofol', aliases: [], categories: [] }];
 export const presentations: Presentation[] = [];
 export const recommendations: Recommendation[] = [];
-const navigation = (id: string, group: Group, title: string, description: string, href: string, terms: string[]): SearchEntry => ({ id, group, title, description, href, terms: [...terms], species: [], routes: [], indications: [], categories: [], navigationOnly: true });
+const navigation = (id: string, group: Group, title: string, description: string, href: string, terms: readonly string[]): SearchEntry => ({ id, group, title, description, href, terms: [...terms], species: [], routes: [], indications: [], categories: [], navigationOnly: true });
 export function buildIndex(drugs: Substance[], products: Presentation[], guidance: Recommendation[]): SearchEntry[] {
   const output: SearchEntry[] = drugs.filter(d => !d.publication || isPublished(d.publication, d.source)).map(d => ({
     ...navigation(d.id, 'MEDICAMENTOS', d.name, d.publication ? 'Ficha del medicamento · consultar fuentes' : 'Ficha en preparación · sin datos clínicos publicados', `/medicamentos/${d.slug}`, d.aliases),
@@ -79,12 +81,22 @@ export const catalog: SearchEntry[] = [
     categories: product.atcvet,
     source: sources[0],
   })),
-  navigation('dose', 'CALCULADORAS', 'Dosis y volumen', 'Conversión matemática de una dosis seleccionada por el profesional.', '/calculadoras/dose', ['dosis', 'peso', 'concentración', 'mg kg', 'volumen', 'perro', 'gato']),
-  navigation('cri', 'CALCULADORAS', 'Infusión continua · CRI', 'Convierte la tasa introducida en un caudal de infusión.', '/calculadoras/cri', ['CRI', 'infusión', 'continua', 'bomba', 'mg/kg/h', 'µg/kg/min', 'perro', 'gato']),
-  navigation('fluid', 'CALCULADORAS', 'Fluidoterapia', 'Calcula mL/h a partir de la tasa elegida por el profesional.', '/calculadoras/fluidos', ['fluidoterapia', 'fluidos', 'ml kg h', 'perro', 'gato']),
+  ...indications.map(indication => navigation(`indication-${indication.id}`, 'INDICACIONES', indication.names.es, 'Explorar información regulatoria, literatura relacionada y contenido revisado cuando exista.', `/indicaciones/${indication.slug}`, indication.aliases)),
+  ...publishedCalculators.map(calculator => navigation(
+    `calculator-${calculator.id}`,
+    'CALCULADORAS',
+    calculator.name.es,
+    calculator.description.es,
+    `/calculadoras/${calculator.slug}`,
+    [calculator.name.es, calculator.name.en, calculator.name.fr, calculator.category, ...calculator.inputs, ...calculator.supportedUnits]
+  )),
   navigation('patient', 'HERRAMIENTAS', 'Paciente actual', 'Define especie y peso para tus herramientas de cálculo.', '/paciente', ['paciente', 'peso', 'especie', 'perro', 'gato', 'kg']),
   navigation('method', 'HERRAMIENTAS', 'Fuentes y metodología', 'Cómo se separan y revisan los datos de Exacta7.', '/fuentes', ['fuentes', 'evidencia', 'revisión', 'bibliografía', 'regulatorio']),
   ...sources.map(s => ({ ...navigation(s.id, 'REFERENCIAS', s.title, s.kind === 'secondary' ? 'Enlace secundario · seguimiento bibliográfico' : 'Consultar la fuente original', s.url, s.id === 'aaha' ? ['anestesia', 'monitorización', 'perro', 'gato', 'guideline'] : s.id === 'wsava' ? ['dolor', 'analgesia', 'guideline'] : s.id === 'aemps' ? ['productos', 'comercial', 'ficha técnica', 'presentaciones', 'veterinaria'] : ['MSD', 'Merck', 'bibliografía']), source: s })),
 ];
 export { createSearch, normalize } from './search';
+export { indications, findIndication, reviewedRecommendations } from './indications';
+export type { ClinicalIndication, ReviewedRecommendation, RecommendationWorkflowState } from './indications';
+export { pubMedProvider, rankLiterature } from './literature';
+export type { LiteratureProvider, LiteraturePublication, LiteratureQuery, LiteratureSearchResult, PublicationType } from './literature';
 

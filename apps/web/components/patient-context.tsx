@@ -11,15 +11,16 @@ export type ClinicalCase = {
 };
 export type CaseInput = Omit<ClinicalCase, 'case_id' | 'created_at' | 'last_activity_at' | 'status'>;
 export type StoredCalculation = { calculation_id: string; case_id: string; tool_type: string; created_at: string; result: unknown };
+export type LocalFavorite = { id: string; kind: 'medicine' | 'presentation' | 'calculator' | 'indication' | 'reference'; label: string; href: string; created_at: string };
 type CaseRecord = { case: ClinicalCase; tools: Record<string, unknown>; calculations: StoredCalculation[] };
-type CaseStore = { version: 1; active_case_id: string | null; cases: CaseRecord[] };
+type CaseStore = { version: 1; active_case_id: string | null; cases: CaseRecord[]; favorites: LocalFavorite[] };
 
 const KEY = 'exacta7.active-cases.v1';
 export const ACTIVE_CASE_EXPIRY_MS = 12 * 60 * 60 * 1000;
 export const STALE_CASE_WARNING_MS = 8 * 60 * 60 * 1000;
 let memory: string | null = null;
 let storageFailed = false;
-const emptyStore = (): CaseStore => ({ version: 1, active_case_id: null, cases: [] });
+const emptyStore = (): CaseStore => ({ version: 1, active_case_id: null, cases: [], favorites: [] });
 const now = () => new Date().toISOString();
 function emit() { window.dispatchEvent(new Event('exacta7:cases')); }
 function snapshot() { try { return storageFailed ? memory : localStorage.getItem(KEY); } catch { return memory; } }
@@ -35,7 +36,8 @@ export function parseCaseStore(raw: string | null): CaseStore {
     const value = JSON.parse(raw) as CaseStore;
     if (value.version !== 1 || !Array.isArray(value.cases)) return emptyStore();
     const cases = value.cases.filter(record => validCase(record.case)).map(record => ({ ...record, tools: record.tools && typeof record.tools === 'object' ? record.tools : {}, calculations: Array.isArray(record.calculations) ? record.calculations.filter(c => c.case_id === record.case.case_id) : [] }));
-    return { version: 1, active_case_id: cases.some(record => record.case.case_id === value.active_case_id) ? value.active_case_id : null, cases };
+    const favorites = Array.isArray(value.favorites) ? value.favorites.filter((item): item is LocalFavorite => !!item && typeof item === 'object' && typeof item.id === 'string' && typeof item.kind === 'string' && typeof item.label === 'string' && typeof item.href === 'string' && typeof item.created_at === 'string') : [];
+    return { version: 1, active_case_id: cases.some(record => record.case.case_id === value.active_case_id) ? value.active_case_id : null, cases, favorites };
   } catch { return emptyStore(); }
 }
 export function expireCases(store: CaseStore, at = Date.now()): CaseStore {
@@ -51,7 +53,8 @@ type CaseContextValue = {
   store: CaseStore; activeCase: ClinicalCase | null; persistent: boolean;
   createCase: (input: CaseInput) => ClinicalCase; updateCase: (caseId: string, input: CaseInput) => void;
   activateCase: (caseId: string) => boolean; reactivateCase: (caseId: string) => boolean; finishCase: (caseId: string) => void; touchCase: (caseId: string) => void;
-  getToolState: <T,>(caseId: string, tool: string) => T | null; saveToolState: (caseId: string, tool: string, state: unknown) => void; saveCalculation: (calculation: StoredCalculation) => void;
+  getToolState: <T,>(caseId: string, tool: string) => T | null; saveToolState: (caseId: string, tool: string, state: unknown) => void; saveCalculation: (calculation: StoredCalculation) => void; removeCalculation: (calculationId: string) => void; clearCalculations: () => void;
+  addFavorite: (favorite: Omit<LocalFavorite, 'created_at'>) => void; removeFavorite: (id: string) => void;
 };
 const CaseContext = createContext<CaseContextValue | null>(null);
 
@@ -77,7 +80,11 @@ export function PatientProvider({ children }: { children: ReactNode }) {
   const getToolState = <T,>(caseId: string, tool: string): T | null => store.cases.find(record => record.case.case_id === caseId)?.tools[tool] as T ?? null;
   const saveToolState = (caseId: string, tool: string, state: unknown) => mutate(draft => ({ ...draft, cases: draft.cases.map(record => record.case.case_id === caseId && record.case.status === 'ACTIVE' ? { ...record, tools: { ...record.tools, [tool]: state }, case: { ...record.case, last_activity_at: now() } } : record) }));
   const saveCalculation = (calculation: StoredCalculation) => mutate(draft => ({ ...draft, cases: draft.cases.map(record => record.case.case_id === calculation.case_id && record.case.status === 'ACTIVE' ? { ...record, calculations: [...record.calculations.filter(item => item.calculation_id !== calculation.calculation_id), calculation], case: { ...record.case, last_activity_at: now() } } : record) }));
-  return <CaseContext.Provider value={{ store, activeCase, persistent: !storageFailed, createCase, updateCase, activateCase, reactivateCase, finishCase, touchCase, getToolState, saveToolState, saveCalculation }}>{children}</CaseContext.Provider>;
+  const removeCalculation = (calculationId: string) => mutate(draft => ({ ...draft, cases: draft.cases.map(record => ({ ...record, calculations: record.calculations.filter(item => item.calculation_id !== calculationId) })) }));
+  const clearCalculations = () => mutate(draft => ({ ...draft, cases: draft.cases.map(record => ({ ...record, calculations: [] })) }));
+  const addFavorite = (favorite: Omit<LocalFavorite, 'created_at'>) => mutate(draft => ({ ...draft, favorites: [...draft.favorites.filter(item => item.id !== favorite.id), { ...favorite, created_at: now() }] }));
+  const removeFavorite = (id: string) => mutate(draft => ({ ...draft, favorites: draft.favorites.filter(item => item.id !== id) }));
+  return <CaseContext.Provider value={{ store, activeCase, persistent: !storageFailed, createCase, updateCase, activateCase, reactivateCase, finishCase, touchCase, getToolState, saveToolState, saveCalculation, removeCalculation, clearCalculations, addFavorite, removeFavorite }}>{children}</CaseContext.Provider>;
 }
 export function usePatient() { const context = useContext(CaseContext); if (!context) throw new Error('PatientProvider is required.'); return context; }
 export const caseLabel = (item: ClinicalCase) => item.alias || `Caso ${item.case_id.slice(0, 4).toUpperCase()}`;
