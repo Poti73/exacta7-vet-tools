@@ -79,7 +79,11 @@ importers:
         specifier: 10.6.0
         version: 10.6.0
 
-  packages/knowledge: {}
+  packages/knowledge:
+    dependencies:
+      '@exacta7/clinical-core':
+        specifier: workspace:*
+        version: link:../clinical-core
 
 packages:
 

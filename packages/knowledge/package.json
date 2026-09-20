@@ -1,1 +1,1 @@
-{"name":"@exacta7/knowledge","version":"0.1.0","private":true,"type":"module","exports":{".":"./src/index.ts","./regulatory":"./src/regulatory.ts"}}
+{"name":"@exacta7/knowledge","version":"0.1.0","private":true,"type":"module","exports":{".":"./src/index.ts","./regulatory":"./src/regulatory.ts"},"dependencies":{"@exacta7/clinical-core":"workspace:*"}}

@@ -1,0 +1,7 @@
+'use client';
+
+import Link from 'next/link';
+import { indications } from '@exacta7/knowledge';
+import { useI18n } from '../../components/i18n';
+
+export default function IndicationsPage() { const { locale } = useI18n(); const t = locale === 'en' ? { eye: 'EXPLORE BY INDICATION', title: 'Documented clinical context', lead: 'Browse structured clinical entities. Product matches appear only when they are supported by published, traceable regulatory data.', open: 'Explore' } : locale === 'fr' ? { eye: 'EXPLORER PAR INDICATION', title: 'Contexte clinique documenté', lead: 'Parcourez les entités cliniques structurées. Les produits ne sont associés que lorsqu’ils reposent sur des données réglementaires publiées et traçables.', open: 'Explorer' } : { eye: 'EXPLORAR POR INDICACIÓN', title: 'Contexto clínico documentado', lead: 'Consulta entidades clínicas estructuradas. Los productos solo aparecen cuando están respaldados por datos regulatorios publicados y trazables.', open: 'Explorar' }; return <><div className="page-intro compact"><p className="eyebrow green">{t.eye}</p><h1>{t.title}</h1><p className="lead">{t.lead}</p></div><div className="tool-grid">{indications.map(indication => <Link className="tool-card" href={`/indicaciones/${indication.slug}`} key={indication.id}><h2>{indication.names[locale]}</h2><p>{indication.aliases.join(' · ')}</p><span>{t.open} →</span></Link>)}</div></>; }
