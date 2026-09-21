@@ -1,11 +1,25 @@
-// Displayed prices are deliberately separate from Stripe Price IDs. Update both
-// display variables and the corresponding Stripe Price ID only after creating
-// matching prices in the same Stripe mode (test or live).
+export type SupportedLocale = 'es' | 'en' | 'fr';
+export type ProInterval = 'monthly' | 'yearly';
+
+type LocalizedText = Record<SupportedLocale, string>;
+
+// Public presentation only. Stripe Price IDs remain server environment values.
+const price = (es: string, en: string, fr: string): LocalizedText => ({ es, en, fr });
+
 export const pricingConfig = {
-  display: {
-    monthly: process.env.NEXT_PUBLIC_STRIPE_PRO_MONTHLY_DISPLAY_PRICE ?? '9,90 €',
-    yearly: process.env.NEXT_PUBLIC_STRIPE_PRO_YEARLY_DISPLAY_PRICE ?? '99 €',
+  free: { amountCents: 0, display: price('0 €', '€0', '0 €') },
+  pro: {
+    monthly: { amountCents: 799, display: price('7,99 €/mes', '€7.99/month', '7,99 €/mois') },
+    yearly: {
+      amountCents: 5999,
+      display: price('59,99 €/año', '€59.99/year', '59,99 €/an'),
+      equivalent: price('Equivale a 5 €/mes', 'Equivalent to €5/month', 'Équivaut à 5 €/mois'),
+      saving: price('Ahorra 35,89 € al año', 'Save €35.89/year', 'Économisez 35,89 € par an'),
+    },
   },
-  nextApprovedPrice: { monthly: '7,99 €', yearly: '59,99 €' },
   intervals: { monthly: 'monthly', yearly: 'yearly' } as const,
-};
+} as const;
+
+export function getProPrice(interval: ProInterval, locale: SupportedLocale) {
+  return pricingConfig.pro[interval].display[locale];
+}

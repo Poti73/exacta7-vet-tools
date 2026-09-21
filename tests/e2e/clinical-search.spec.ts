@@ -44,6 +44,19 @@ test('los filtros de la portada cambian los resultados destacados', async ({ pag
   await expect(page.getByRole('link', { name: /AEMPS/ }).first()).toBeVisible();
 });
 
+test('planes muestra los precios aprobados y cambia el checkout al ciclo anual', async ({ page }) => {
+  await page.goto('/planes');
+  const proCard = page.locator('.pricing-card-pro');
+  await expect(proCard).toContainText('7,99 €/mes');
+  await expect(proCard).toContainText('PRO · MENSUAL');
+  await page.getByRole('button', { name: 'Anual', exact: true }).click();
+  await expect(proCard).toContainText('59,99 €/año');
+  await expect(proCard).toContainText('Equivale a 5 €/mes');
+  await expect(proCard).toContainText('Ahorra 35,89 € al año');
+  await expect(proCard.getByRole('button', { name: /Elegir Pro anual/ })).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+});
+
 test('casos activos aíslan peso, concentración y resultados por case_id', async ({ page }) => {
   await page.goto('/paciente?new=1');
   await createCase(page, { alias: 'Toby', species: 'Perro', weight: '18.4', asa: 'II' });

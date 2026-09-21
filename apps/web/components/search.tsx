@@ -21,8 +21,13 @@ export function ClinicalSearch({ compact = false, medicationOnly = false }: { co
   }, [compact]);
   function keys(e: KeyboardEvent) {
     if (e.key === 'Escape') { setOpen(false); input.current?.focus(); return; }
-    if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
     const links = Array.from(area.current?.querySelectorAll<HTMLAnchorElement>('[data-result]') ?? []);
+    if (e.key === 'Enter' && document.activeElement === input.current && links.length) {
+      e.preventDefault();
+      links[0].click();
+      return;
+    }
+    if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
     if (!links.length) return;
     e.preventDefault(); const current = links.indexOf(document.activeElement as HTMLAnchorElement);
     const next = e.key === 'ArrowDown' ? (current + 1) % links.length : current <= 0 ? links.length - 1 : current - 1;
