@@ -54,7 +54,27 @@ test('planes muestra los precios aprobados y cambia el checkout al ciclo anual',
   await expect(proCard).toContainText('Equivale a 5 €/mes');
   await expect(proCard).toContainText('Ahorra 35,89 € al año');
   await expect(proCard.getByRole('button', { name: /Elegir Pro anual/ })).toBeVisible();
+  await expect(page.getByText('Los precios de prueba no generan cobros reales.')).toBeVisible();
+  await expect(page.locator('body')).not.toContainText('9,90 €/mes');
+  await expect(page.locator('body')).not.toContainText(/(^|\s)99 €\/año/);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+});
+
+test('las superficies GEO públicas se renderizan sin desbordamiento', async ({ page }) => {
+  for (const [path, heading] of [
+    ['/comparar', 'Elige según la necesidad de información'],
+    ['/comparar/exacta7-vs-cima-vet', 'Exacta7 vs CIMA Vet'],
+    ['/comparar/exacta7-vs-plumbs', 'Exacta7 vs Plumb’s'],
+    ['/comparar/exacta7-vs-vin', 'Exacta7 vs VIN'],
+    ['/alternativas/plumbs', 'Alternativas a Plumb’s: elige por necesidad, no por etiqueta'],
+    ['/para/estudiantes-veterinaria', 'Comprender el cálculo y la fuente antes del resultado'],
+    ['/para/veterinarios', 'Fuente, contexto y cálculo transparente'],
+    ['/fuentes/actualizaciones-aemps', 'Actualización AEMPS/CIMA Vet: corte 2026-09-16'],
+  ] as const) {
+    await page.goto(path);
+    await expect(page.getByRole('heading', { name: heading, exact: true })).toBeVisible();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+  }
 });
 
 test('casos activos aíslan peso, concentración y resultados por case_id', async ({ page }) => {

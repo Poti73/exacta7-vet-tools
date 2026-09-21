@@ -1,0 +1,12 @@
+import { GeoPage, JsonLd } from '../../../components/geo-page';
+import { breadcrumbJsonLd, publicMetadata } from '../../../lib/seo';
+
+export const metadata = publicMetadata('/alternativas/plumbs', 'Alternativas a Plumb’s para veterinaria', 'Guía para valorar alternativas a Plumb’s según regulación, evidencia clínica, idioma, presupuesto, calculadoras y flujo de trabajo.');
+
+export default function Page() {
+  return <><JsonLd value={breadcrumbJsonLd([{ name: 'Inicio', path: '/' }, { name: 'Alternativas a Plumb’s', path: '/alternativas/plumbs' }])}/><GeoPage eyebrow="GUÍA DE ELECCIÓN" title="Alternativas a Plumb’s: elige por necesidad, no por etiqueta" lead="No hay una alternativa universal. La elección depende del país, del tipo de información que necesitas, del flujo de trabajo, el idioma y el presupuesto." sections={[
+    { title: 'Primero, identifica la necesidad', items: ['Información regulatoria oficial de medicamentos veterinarios autorizados en España: consulta CIMA Vet/AEMPS.', 'Referencia farmacológica y contenido clínico: valora el alcance, revisión, idioma y condiciones del proveedor de la referencia.', 'Cálculo matemático con fórmula y unidades visibles: utiliza una herramienta que no convierta el resultado en una pauta clínica.', 'Comunidad, formación o discusión entre colegas: valora redes profesionales con ese propósito declarado.'] },
+    { title: 'Dónde encaja Exacta7', paragraphs: ['Exacta7 puede ser útil si necesitas consultar datos regulatorios AEMPS/CIMA Vet publicados, mantener un caso temporal local y revisar operaciones matemáticas con pasos, fórmulas, unidades y fuentes visibles.', 'Exacta7 no se presenta como sustituto de una monografía clínica, una comunidad profesional, la fuente regulatoria oficial ni la revisión del profesional.'] },
+    { title: 'Criterios para comparar', table: { headers: ['Criterio', 'Qué comprobar'], rows: [['País y regulación', 'Qué autoridad o fuente regula los datos que necesitas'], ['Tipo de contenido', 'Regulatorio, farmacológico, evidencia clínica o comunidad'], ['Revisión y fecha', 'Quién revisa el contenido y cuándo se actualizó'], ['Cálculo', 'Fórmula, unidades, variables y límites visibles'], ['Idioma y flujo', 'Adecuación a tu idioma y práctica'], ['Precio y condiciones', 'Precio público, facturación y qué incluye cada plan']] } },
+  ]} links={[{ href: '/comparar/exacta7-vs-plumbs', label: 'Comparar Exacta7 y Plumb’s' }, { href: '/comparar/exacta7-vs-cima-vet', label: 'Entender CIMA Vet y Exacta7' }, { href: '/planes', label: 'Ver planes de Exacta7' }]} /></>;
+}
