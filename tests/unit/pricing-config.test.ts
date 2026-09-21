@@ -24,4 +24,17 @@ describe('pricing configuration', () => {
     expect(pricingConfig.pro.yearly.equivalent.fr).toBe('Équivaut à 5 €/mois');
     expect(pricingConfig.pro.yearly.saving.fr).toBe('Économisez 35,89 € par an');
   });
+
+  it('does not reintroduce retired public price displays', () => {
+    const publicDisplays = [
+      ...Object.values(pricingConfig.pro.monthly.display),
+      ...Object.values(pricingConfig.pro.yearly.display),
+    ].join(' ');
+
+    expect(publicDisplays).not.toContain('9,90');
+    expect(publicDisplays).not.toContain('9.90');
+    expect(publicDisplays).not.toMatch(/(^|\s)99 €\/año/);
+    expect(publicDisplays).not.toMatch(/€99\/year/);
+    expect(publicDisplays).not.toMatch(/(^|\s)99 €\/an/);
+  });
 });

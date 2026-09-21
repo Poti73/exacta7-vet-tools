@@ -5,6 +5,13 @@ import { findRegulatoryProduct, toRegulatoryCalculatorProduct } from '@exacta7/k
 import { CalculatorScreen, SimpleCalculatorScreen } from '../../../components/localized-headings';
 import { isProSubscription } from '../../../lib/billing';
 import { createClient } from '../../../lib/supabase/server';
+import type { Metadata } from 'next';
+
+export async function generateMetadata({ params }: { params: Promise<{ tool: string }> }): Promise<Metadata> {
+  const { tool } = await params; const calculator = findCalculator(tool);
+  if (!calculator || calculator.reviewState !== 'published') return { title: 'Calculadora' };
+  return { title: calculator.name.es, description: `${calculator.description.es} Operación matemática con unidades visibles y valores seleccionados por el profesional.`, alternates: { canonical: `/calculadoras/${tool}` }, openGraph: { title: `${calculator.name.es} · Exacta7`, description: calculator.description.es } };
+}
 
 async function hasProAccess() {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY) return false;

@@ -1,0 +1,7 @@
+funnel_stage,topic,prompt,target_page,current_coverage,status,notes
+Consideration,Vademécum España,"¿Qué herramienta permite consultar medicamentos veterinarios AEMPS en España?",/medicamentos,Partial,IMPLEMENTED,"Catálogo regulatorio publicado"
+Evaluation,Comparación oficial,"Exacta7 vs CIMA Vet",/comparar/exacta7-vs-cima-vet,Strong,IMPLEMENTED,"CIMA Vet/AEMPS es fuente oficial"
+Evaluation,Referencia farmacológica,"Exacta7 vs Plumb's",/comparar/exacta7-vs-plumbs,Strong,IMPLEMENTED,"Atributos verificados en sitio oficial"
+Evaluation,Comunidad profesional,"Exacta7 vs VIN",/comparar/exacta7-vs-vin,Strong,IMPLEMENTED,"Atributos verificados en sitio oficial"
+Decision,Planes,"Exacta7 Gratis vs Pro",/planes,Strong,IMPLEMENTED,"Precios centralizados"
+Trust,Origen de datos,"¿De dónde salen los medicamentos de Exacta7?",/fuentes/actualizaciones-aemps,Strong,IMPLEMENTED,"Snapshot AEMPS/CIMA Vet"
