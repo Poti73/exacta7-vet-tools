@@ -4,7 +4,7 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from '
 export type Locale = 'es' | 'en' | 'fr';
 const copy = {
   es: {
-    skip:'Saltar al contenido', navMedicines:'Vademécum', navTools:'Herramientas', navIndications:'Indicaciones', navHistory:'Historial', plans:'Planes', navCompare:'Comparar', navSources:'Fuentes', navAbout:'Sobre Exacta7', navContact:'Contacto', privacy:'Privacidad', cookies:'Cookies', navLabel:'Navegación principal', home:'inicio',
+    skip:'Saltar al contenido', navMedicines:'Vademécum', navTools:'Herramientas', navIndications:'Indicaciones', navHistory:'Historial', plans:'Planes', navCompare:'Comparar', navSources:'Fuentes', navAbout:'Sobre Exacta7', navContact:'Contacto', legalNotice:'Aviso legal', terms:'Términos', privacy:'Privacidad', cookies:'Cookies', navLabel:'Navegación principal', home:'inicio',
     footerMethod:'Metodología y fuentes', footerStatus:'Catálogo regulatorio AEMPS publicado', footerCredit:'Proyecto desarrollado por', footerCreditTail:'Tecnología con pulso veterinario.',
     language:'Idioma', globalSearch:'Búsqueda global', clinicalSearch:'Búsqueda clínica', searchExacta:'Buscar en Exacta7', searchLong:'Buscar medicamentos, calculadoras y fuentes', searchPlaceholder:'Principio activo, nombre comercial, especie o vía…',
     all:'Todo', searchContext:'BUSCA POR NOMBRE O CONTEXTO', explore:'EXPLORA EL CONOCIMIENTO CLÍNICO', searchHelp:'Encuentra fichas, herramientas y referencias en un solo lugar.', noResults:'Sin resultados', results:'resultados', result:'resultado', for:'para',
@@ -13,7 +13,7 @@ const copy = {
     regulatoryProduct:'Producto AEMPS/CIMA Vet',
   },
   en: {
-    skip:'Skip to content', navMedicines:'Formulary', navTools:'Tools', navIndications:'Indications', navHistory:'History', plans:'Plans', navCompare:'Compare', navSources:'Sources', navAbout:'About Exacta7', navContact:'Contact', privacy:'Privacy', cookies:'Cookies', navLabel:'Main navigation', home:'home',
+    skip:'Skip to content', navMedicines:'Formulary', navTools:'Tools', navIndications:'Indications', navHistory:'History', plans:'Plans', navCompare:'Compare', navSources:'Sources', navAbout:'About Exacta7', navContact:'Contact', legalNotice:'Legal notice', terms:'Terms', privacy:'Privacy', cookies:'Cookies', navLabel:'Main navigation', home:'home',
     footerMethod:'Methodology and sources', footerStatus:'AEMPS regulatory catalogue published', footerCredit:'A project by', footerCreditTail:'Technology with a veterinary pulse.',
     language:'Language', globalSearch:'Global search', clinicalSearch:'Clinical search', searchExacta:'Search Exacta7', searchLong:'Search medicines, calculators and sources', searchPlaceholder:'Active ingredient, trade name, species or route…',
     all:'All', searchContext:'SEARCH BY NAME OR CONTEXT', explore:'EXPLORE CLINICAL KNOWLEDGE', searchHelp:'Find records, tools and references in one place.', noResults:'No results', results:'results', result:'result', for:'for',
@@ -22,7 +22,7 @@ const copy = {
     regulatoryProduct:'AEMPS/CIMA Vet product',
   },
   fr: {
-    skip:'Aller au contenu', navMedicines:'Formulaire', navTools:'Outils', navIndications:'Indications', navHistory:'Historique', plans:'Formules', navCompare:'Comparer', navSources:'Sources', navAbout:'À propos', navContact:'Contact', privacy:'Confidentialité', cookies:'Cookies', navLabel:'Navigation principale', home:'accueil',
+    skip:'Aller au contenu', navMedicines:'Formulaire', navTools:'Outils', navIndications:'Indications', navHistory:'Historique', plans:'Formules', navCompare:'Comparer', navSources:'Sources', navAbout:'À propos', navContact:'Contact', legalNotice:'Mentions légales', terms:'Conditions', privacy:'Confidentialité', cookies:'Cookies', navLabel:'Navigation principale', home:'accueil',
     footerMethod:'Méthodologie et sources', footerStatus:'Catalogue réglementaire AEMPS publié', footerCredit:'Projet développé par', footerCreditTail:'La technologie au rythme vétérinaire.',
     language:'Langue', globalSearch:'Recherche globale', clinicalSearch:'Recherche clinique', searchExacta:'Rechercher dans Exacta7', searchLong:'Rechercher médicaments, calculateurs et sources', searchPlaceholder:'Principe actif, nom commercial, espèce ou voie…',
     all:'Tout', searchContext:'RECHERCHER PAR NOM OU CONTEXTE', explore:'EXPLORER LES CONNAISSANCES CLINIQUES', searchHelp:'Retrouvez fiches, outils et références au même endroit.', noResults:'Aucun résultat', results:'résultats', result:'résultat', for:'pour',

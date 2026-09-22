@@ -17,7 +17,7 @@ const faq = [
   { question: '¿Puedo empezar gratis?', answer: 'Sí. Exacta7 Gratis incluye una cuenta, el buscador clínico, el vademécum AEMPS público y las herramientas de cálculo esenciales.' },
   { question: '¿Qué añade Exacta7 Pro?', answer: 'Pro incluye las herramientas de diluciones y goteo, registros de cálculo transparentes y soporte prioritario.' },
   { question: '¿Cuál es la diferencia entre el plan mensual y el anual?', answer: `Ambos incluyen las mismas funciones Pro. El mensual cuesta ${pricingConfig.pro.monthly.display.es}. El anual se factura una vez al año por ${pricingConfig.pro.yearly.display.es}, ${pricingConfig.pro.yearly.equivalent.es.toLowerCase()}, con un ${pricingConfig.pro.yearly.saving.es.toLowerCase()}.` },
-  { question: '¿Los cobros son reales?', answer: 'No durante esta fase: el checkout usa Stripe en modo de prueba y los precios de prueba no generan cargos reales.' },
+  { question: '¿Cómo funciona la cancelación y qué ocurre con el acceso?', answer: 'Puedes cancelar en cualquier momento desde tu cuenta. La cancelación impide la siguiente renovación automática y mantienes el acceso completo a Exacta7 Pro hasta que concluya el período ya pagado.' },
 ];
 
 export default function Page() {

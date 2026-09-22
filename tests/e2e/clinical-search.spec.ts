@@ -54,7 +54,8 @@ test('planes muestra los precios aprobados y cambia el checkout al ciclo anual',
   await expect(proCard).toContainText('Equivale a 5 €/mes');
   await expect(proCard).toContainText('Ahorra 35,89 € al año');
   await expect(proCard.getByRole('button', { name: /Elegir Pro anual/ })).toBeVisible();
-  await expect(page.getByText('Los precios de prueba no generan cobros reales.')).toBeVisible();
+  await expect(proCard).toContainText('59,99 €/año · Renovación automática. Cancela cuando quieras.');
+  await expect(page.locator('body')).not.toContainText('Los precios de prueba no generan cobros reales.');
   await expect(page.locator('body')).not.toContainText('9,90 €/mes');
   await expect(page.locator('body')).not.toContainText(/(^|\s)99 €\/año/);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
