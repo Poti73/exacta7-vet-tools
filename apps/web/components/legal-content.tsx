@@ -16,7 +16,7 @@ const legalNotice = {
         details: [
           { label: 'Titular / Denominación social', value: 'Yosvany Cantero Romero' },
           { label: 'NIF / CIF', value: '79373503C' },
-          { label: 'Domicilio social / fiscal', value: 'Calle El Hoyo, 9B, San Miguel de Abona, 30328, Santa Cruz de Tenerife, España' },
+          { label: 'Domicilio social / fiscal', value: 'Calle El Hoyo, 9B, San Miguel de Abona, 38628, Santa Cruz de Tenerife, España' },
           { label: 'Correo electrónico de contacto', value: 'info@exacta7.com' },
           { label: 'Dominio oficial', value: 'https://exacta7.com' },
         ],
@@ -69,7 +69,7 @@ const legalNotice = {
         details: [
           { label: 'Provider / Entity Name', value: 'Yosvany Cantero Romero' },
           { label: 'Tax ID / VAT', value: '79373503C' },
-          { label: 'Registered address', value: 'Calle El Hoyo, 9B, San Miguel de Abona, 30328, Santa Cruz de Tenerife, España' },
+          { label: 'Registered address', value: 'Calle El Hoyo, 9B, San Miguel de Abona, 38628, Santa Cruz de Tenerife, España' },
           { label: 'Contact email', value: 'info@exacta7.com' },
           { label: 'Official domain', value: 'https://exacta7.com' },
         ],
@@ -121,7 +121,7 @@ const legalNotice = {
         details: [
           { label: 'Titulaire / Raison sociale', value: 'Yosvany Cantero Romero' },
           { label: 'NIF / Numéro fiscal', value: '79373503C' },
-          { label: 'Siège social / Adresse', value: 'Calle El Hoyo, 9B, San Miguel de Abona, 30328, Santa Cruz de Tenerife, España' },
+          { label: 'Siège social / Adresse', value: 'Calle El Hoyo, 9B, San Miguel de Abona, 38628, Santa Cruz de Tenerife, España' },
           { label: 'Courrier électronique', value: 'info@exacta7.com' },
           { label: 'Domaine officiel', value: 'https://exacta7.com' },
         ],
