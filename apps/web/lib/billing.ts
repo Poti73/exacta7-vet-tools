@@ -1,3 +1,9 @@
+export type CustomerType = 'business' | 'individual';
+
+export function isCustomerType(value: unknown): value is CustomerType {
+  return value === 'business' || value === 'individual';
+}
+
 export type SubscriptionRecord = {
   status: string;
   stripe_price_id: string | null;
