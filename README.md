@@ -1,5 +1,9 @@
 # Exacta7 · buscador clínico y vademécum
 
+## Versión gratuita preparada — 12/10/2026
+
+La versión está configurada como beta gratuita: todas las calculadoras publicadas se pueden ejecutar sin cuenta ni tarjeta, y las rutas de Checkout y portal de facturación están bloqueadas. El diseño de suscripciones se conserva y puede restaurarse con `productMode.freeBeta` tras revisión. Copia previa y procedimiento: [FREE-BETA-AND-PAID-RESTORE.md](docs/FREE-BETA-AND-PAID-RESTORE.md).
+
 Base local del módulo solicitado: Next.js 16, React, TypeScript y paquetes reutilizables.
 
 ## Ejecución

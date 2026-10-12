@@ -5,6 +5,7 @@ import { findRegulatoryProduct, toRegulatoryCalculatorProduct } from '@exacta7/k
 import { CalculatorScreen, SimpleCalculatorScreen } from '../../../components/localized-headings';
 import { isProSubscription, type UserAccessState } from '../../../lib/billing';
 import { createClient } from '../../../lib/supabase/server';
+import { productMode, canUsePublishedCalculator } from '../../../lib/product-mode';
 import type { Metadata } from 'next';
 
 export const dynamic = 'force-dynamic';
@@ -45,8 +46,8 @@ export default async function Page({ params, searchParams }: { params: Promise<{
   if (!metadata || metadata.reviewState !== 'published') notFound();
 
   if (tool === 'unit-converter' || tool === 'dilutions' || tool === 'drip-rate') {
-    const accessState = await getUserAccessState();
-    const proAllowed = metadata.plan === 'free' || accessState.isPro;
+    const accessState = productMode.freeBeta ? { isAuthenticated: false, isPro: false, userId: null } : await getUserAccessState();
+    const proAllowed = canUsePublishedCalculator(metadata.plan, accessState.isPro);
     return <SimpleCalculatorScreen tool={tool} proAllowed={proAllowed} accessState={accessState} />;
   }
 

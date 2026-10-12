@@ -6,6 +6,8 @@ import { useState } from 'react';
 import { CheckoutButton } from './checkout-button';
 import { useI18n } from './i18n';
 import { getProPrice, pricingConfig } from '../lib/pricing-config';
+import { productMode } from '../lib/product-mode';
+import { BetaAccess } from './beta-access';
 
 const labels = {
   es: {
@@ -20,6 +22,10 @@ const labels = {
 } as const;
 
 export function Pricing() {
+  return productMode.freeBeta ? <BetaAccess /> : <PaidPricing />;
+}
+
+function PaidPricing() {
   const { locale } = useI18n();
   const t = labels[locale];
   const [annual, setAnnual] = useState(false);

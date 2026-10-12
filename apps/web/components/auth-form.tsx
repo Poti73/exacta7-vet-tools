@@ -1,4 +1,6 @@
 'use client';
+import { productMode } from '../lib/product-mode';
+import { betaCopy } from '../lib/beta-copy';
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -51,7 +53,7 @@ export function AuthForm({ nextPath = '/cuenta' }: { nextPath?: string }) {
     <section className="auth-card panel narrow">
       <p className="eyebrow green">{t.account}</p>
       <h1>{mode === 'signup' ? t.create : t.signIn}</h1>
-      <p className="lead">{t.lead}</p>
+      <p className="lead">{productMode.freeBeta ? betaCopy[locale].lead : t.lead}</p>
       <form className="form-stack" onSubmit={submit}>
         <label>{t.email}<input type="email" value={email} onChange={event => setEmail(event.target.value)} autoComplete="email" required /></label>
         <label>{t.password}<input type="password" value={password} onChange={event => setPassword(event.target.value)} autoComplete={mode === 'signup' ? 'new-password' : 'current-password'} minLength={8} required /></label>

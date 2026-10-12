@@ -2,11 +2,13 @@ import Stripe from 'stripe';
 import { createAdminClient } from '../../../../lib/supabase/admin';
 import { createClient } from '../../../../lib/supabase/server';
 import { isCustomerType } from '../../../../lib/billing';
+import { productMode } from '../../../../lib/product-mode';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 export async function POST(request: Request) {
+  if (productMode.freeBeta) return Response.json({ error: 'billing_paused_free_beta' }, { status: 403 });
   try {
     const supabase = await createClient();
     const { data, error } = await supabase.auth.getClaims();

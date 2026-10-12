@@ -4,6 +4,8 @@ const mocks = vi.hoisted(() => ({
   auth: vi.fn(), from: vi.fn(), createCustomer: vi.fn(), retrieveCustomer: vi.fn(),
   updateCustomer: vi.fn(), createSession: vi.fn(), retrieveSubscription: vi.fn(), verify: vi.fn(),
 }));
+const release = vi.hoisted(() => ({ freeBeta: false }));
+vi.mock('../../apps/web/lib/product-mode', () => ({ productMode: release }));
 vi.mock('../../apps/web/lib/supabase/server', () => ({ createClient: async () => ({ auth: { getClaims: mocks.auth } }) }));
 vi.mock('../../apps/web/lib/supabase/admin', () => ({ createAdminClient: () => ({ from: mocks.from }) }));
 // Resolve the app's SDK installation, which can differ from the root dependency
@@ -16,6 +18,7 @@ vi.mock('../../apps/web/node_modules/stripe/esm/stripe.esm.node.js', () => ({ de
 } }));
 
 import { POST as checkout } from '../../apps/web/app/api/billing/checkout/route';
+import { POST as portal } from '../../apps/web/app/api/billing/portal/route';
 import { POST as webhook } from '../../apps/web/app/api/webhooks/stripe/route';
 
 type Row = Record<string, unknown>;
@@ -57,6 +60,7 @@ async function sendEvent(type: string, object: Row) {
 const subscription = { id: 'sub_test', customer: 'cus_test', metadata: { supabase_user_id: 'user_test' }, items: { data: [{ price: { id: 'price_month' }, current_period_end: 1800000000 }] }, status: 'active', cancel_at_period_end: false };
 
 beforeEach(() => {
+  release.freeBeta = false;
   vi.resetAllMocks();
   writes.length = 0;
   profile = { id: 'user_test', stripe_customer_id: 'cus_test', customer_type: null };
@@ -81,6 +85,24 @@ beforeEach(() => {
 });
 
 describe('Stripe Checkout billing identity', () => {
+  it('blocks billing portal creation during free beta', async () => {
+    release.freeBeta = true;
+    const response = await portal(request(null));
+    expect(response.status).toBe(403);
+    expect(await response.json()).toEqual({ error: 'billing_paused_free_beta' });
+    expect(mocks.auth).not.toHaveBeenCalled();
+    expect(mocks.from).not.toHaveBeenCalled();
+  });
+  it('blocks checkout before authentication, database writes or Stripe calls during free beta', async () => {
+    release.freeBeta = true;
+    const response = await checkout(request({ interval: 'yearly', customer_type: 'business' }));
+    expect(response.status).toBe(403);
+    expect(await response.json()).toEqual({ error: 'billing_paused_free_beta' });
+    expect(mocks.auth).not.toHaveBeenCalled();
+    expect(mocks.from).not.toHaveBeenCalled();
+    expect(mocks.createCustomer).not.toHaveBeenCalled();
+    expect(mocks.createSession).not.toHaveBeenCalled();
+  });
   it('reuses the Customer, keeps prices and collects B2B details on Stripe', async () => {
     const response = await checkout(request({ interval: 'yearly', customer_type: 'business' }));
     expect(response.status).toBe(200);

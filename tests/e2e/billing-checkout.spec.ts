@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { productMode } from '../../apps/web/lib/product-mode';
 
 const labels = {
   es: { buyer: 'Compro como', monthly: 'Elegir Pro mensual', yearly: 'Elegir Pro anual', annual: 'Anual' },
@@ -8,6 +9,7 @@ const labels = {
 
 for (const locale of ['es', 'en', 'fr'] as const) {
   test(`Checkout requires an explicit buyer type and sends it with the chosen interval (${locale})`, async ({ page }) => {
+    test.skip(productMode.freeBeta, 'Paid flow preserved for subscription relaunch.');
     await page.addInitScript(value => localStorage.setItem('exacta7-locale', value), locale);
     const requests: unknown[] = [];
     await page.route('**/api/billing/checkout', async route => {

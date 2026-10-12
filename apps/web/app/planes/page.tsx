@@ -1,12 +1,18 @@
 import type { Metadata } from 'next';
 import { Pricing } from '../../components/pricing';
 import { pricingConfig } from '../../lib/pricing-config';
+import { productMode, publicOffers } from '../../lib/product-mode';
+import { betaCopy } from '../../lib/beta-copy';
 
 // Pricing is business-critical and must not be served from a year-long static cache.
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
-export const metadata: Metadata = {
+export const metadata: Metadata = productMode.freeBeta ? {
+  title: 'Exacta7 · Beta gratuita', description: betaCopy.es.lead,
+  alternates: { canonical: '/planes' },
+  openGraph: { title: 'Exacta7 · Beta gratuita', description: betaCopy.es.lead },
+} : {
   title: 'Planes y precios de Exacta7 Pro',
   description: 'Compara Exacta7 Gratis y Pro. Pro mensual: 7,99 €/mes; Pro anual: 59,99 €/año, equivalente a 5 €/mes.',
   alternates: { canonical: '/planes' },
@@ -21,6 +27,13 @@ const faq = [
 ];
 
 export default function Page() {
+  if (productMode.freeBeta) {
+    const structuredData = { '@context': 'https://schema.org', '@graph': [
+      { '@type': 'FAQPage', mainEntity: betaCopy.es.faq.map(([question, answer]) => ({ '@type': 'Question', name: question, acceptedAnswer: { '@type': 'Answer', text: answer } })) },
+      { '@type': 'Service', name: 'Exacta7 · Beta gratuita', url: 'https://exacta7.com/planes', offers: publicOffers() },
+    ] };
+    return <><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replace(/</g, '\\u003c') }}/><Pricing /></>;
+  }
   const structuredData = {
     '@context': 'https://schema.org',
     '@graph': [

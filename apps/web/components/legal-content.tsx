@@ -1,6 +1,8 @@
 'use client';
 
 import { useI18n } from './i18n';
+import { productMode } from '../lib/product-mode';
+import { betaCopy } from '../lib/beta-copy';
 
 const legalNotice = {
   es: {
@@ -557,6 +559,10 @@ export function AvisoLegalContent() {
 export function TerminosContent() {
   const { locale } = useI18n();
   const copy = terms[locale];
+  if (productMode.freeBeta) {
+    const beta = betaCopy[locale];
+    return <article className="page-intro legal-page"><p className="eyebrow">{copy.eyebrow}</p><h1>{beta.termsTitle}</h1><p className="lead">{beta.termsLead}</p><section className="legal-section"><h2>1. {beta.badge}</h2><p>{beta.lead}</p><p>{beta.future}</p></section>{copy.sections.filter((_, index) => index < 2 || index > 6).map((section, index) => <section key={section.title} className="legal-section"><h2>{section.title.replace(/^\d+\./, `${index + 2}.`)}</h2>{section.paragraphs.map((p, i) => <p key={i}>{p}</p>)}</section>)}</article>;
+  }
   return (
     <article className="page-intro legal-page">
       <p className="eyebrow">{copy.eyebrow}</p>
@@ -581,7 +587,7 @@ export function PrivacyContent() {
     <article className="page-intro legal-page">
       <p className="eyebrow">{copy.eyebrow}</p>
       <h1>{copy.title}</h1>
-      <p className="lead">{copy.lead}</p>
+      <p className="lead">{copy.lead}</p>{productMode.freeBeta && <p className="notice">{betaCopy[locale].billingNotice}</p>}
       {copy.sections.map((section) => (
         <section key={section.title} className="legal-section">
           <h2>{section.title}</h2>

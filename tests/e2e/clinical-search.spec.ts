@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { productMode } from '../../apps/web/lib/product-mode';
 
 async function createCase(page: import('@playwright/test').Page, values: { alias: string; species: 'Perro' | 'Gato'; weight: string; asa: string }) {
   await page.getByLabel('Alias opcional').fill(values.alias);
@@ -45,6 +46,7 @@ test('los filtros de la portada cambian los resultados destacados', async ({ pag
 });
 
 test('planes muestra los precios aprobados y cambia el checkout al ciclo anual', async ({ page }) => {
+  test.skip(productMode.freeBeta, 'Paid design preserved for subscription relaunch.');
   await page.goto('/planes');
   const proCard = page.locator('.pricing-card-pro');
   await expect(proCard).toContainText('7,99 €/mes');

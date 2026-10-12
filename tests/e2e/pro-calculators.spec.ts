@@ -1,6 +1,8 @@
 import { test, expect } from '@playwright/test';
+import { productMode } from '../../apps/web/lib/product-mode';
 
 test('visitante anónimo en /calculadoras/dilutions ve preview y aviso Pro, no puede calcular y ve CTA a /acceso y /planes', async ({ page }) => {
+  test.skip(productMode.freeBeta, 'Paid access flow preserved for subscription relaunch.');
   await page.goto('/calculadoras/dilutions');
   await expect(page.getByRole('heading', { name: 'Diluciones', exact: true })).toBeVisible();
   const notice = page.locator('.notice');
@@ -15,6 +17,7 @@ test('visitante anónimo en /calculadoras/dilutions ve preview y aviso Pro, no p
 });
 
 test('visitante anónimo en /calculadoras/drip-rate ve preview y aviso Pro, no puede calcular y ve CTA a /acceso y /planes', async ({ page }) => {
+  test.skip(productMode.freeBeta, 'Paid access flow preserved for subscription relaunch.');
   await page.goto('/calculadoras/drip-rate');
   await expect(page.getByRole('heading', { name: 'Velocidad de goteo', exact: true })).toBeVisible();
   const notice = page.locator('.notice');
